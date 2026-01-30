@@ -38,16 +38,17 @@ const authLimiter = rateLimit({
   skipSuccessfulRequests: true, // Only count failed attempts
 });
 
-
 app.use(express.json()); // Parse JSON
 app.use(bodyParser.urlencoded({ extended: true })); // Parse URL-encoded
 app.use(morgan("dev")); // Logger
 app.use(cookieParser()); // Cookies
 app.use(helmet()); // Security headers
-app.use(cors({
-  origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : [],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",") : [],
+    credentials: true,
+  })
+);
 
 // Custom security middleware
 app.use((req, res, next) => {
@@ -80,8 +81,9 @@ app.use((req, res, next) => {
 // Apply global rate limiter
 app.use(limiter);
 
-// Serve static files
-app.use(express.static(path.join(__dirname, "public")));
+// ✅ Serve static files
+// Only change here: expose public folder at /public/...
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 // =================== ROUTES ===================
 
